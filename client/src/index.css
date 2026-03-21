@@ -555,7 +555,7 @@ h3 {
 @media print {
   @page {
     size: A4;
-    margin: 10mm;
+    margin: 5mm; /* Very small margins to maximize space */
   }
 
   /* Reset body and container for print */
@@ -593,11 +593,13 @@ h3 {
     border: none !important;
     visibility: visible !important;
     display: block !important;
+    zoom: 0.9 !important; /* Aggressive scale for guaranteed one-page fit */
   }
 
   /* Ensure all internal elements are visible but allow specific overrides */
   .report-paper * {
     visibility: visible !important;
+    font-size: 9pt !important; /* Smaller base font for print */
   }
 
   /* Hide UI elements aggressively */
@@ -689,7 +691,7 @@ h3 {
   }
 
   .logo-section img {
-    max-width: 180px !important;
+    max-width: 150px !important; /* Further reduced */
   }
 
   /* Hide placeholders and guides */
@@ -701,7 +703,7 @@ h3 {
 
   /* Table Rows: Filling space in A4 print */
   .h-large {
-    min-height: 280px !important; /* Reduced from 350px to ensure one-page fit */
+    min-height: 200px !important; /* Significantly reduced to force fit */
   }
 
   .h-medium {
