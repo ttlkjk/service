@@ -1,34 +1,38 @@
 import { useRef, useEffect, useState } from 'react';
 
-const SignaturePad = ({ value, onChange, width = 300, height = 150 }) => {
+const SignaturePad = ({ value, onChange, label = "서명하기" }) => {
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [ctx, setCtx] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
-    // 캔버스 컨텍스트 초기화 (한 번만)
+    // Initialize canvas context when modal opens
     useEffect(() => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        context.lineWidth = 2;
-        context.lineCap = 'round';
-        context.strokeStyle = '#000';
-        setCtx(context);
-    }, []);
+        if (showModal && canvasRef.current) {
+            const canvas = canvasRef.current;
+            // Set internal drawing size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            const context = canvas.getContext('2d');
+            context.lineWidth = 2.5;
+            context.lineCap = 'round';
+            context.strokeStyle = '#000';
+            setCtx(context);
 
-    // value(기존 서명)가 로드되면 캔버스에 그리기
-    useEffect(() => {
-        if (!value || !canvasRef.current) return;
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        const img = new Image();
-        img.onload = () => {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(img, 0, 0);
-        };
-        img.src = value;
-    }, [value]);
+            // Load existing signature if available
+            if (value) {
+                const img = new Image();
+                img.onload = () => {
+                    context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+                img.src = value;
+            }
+        }
+    }, [showModal, value]);
 
     const startDrawing = (e) => {
+        e.preventDefault();
         const { offsetX, offsetY } = getCoordinates(e);
         ctx.beginPath();
         ctx.moveTo(offsetX, offsetY);
@@ -36,64 +40,105 @@ const SignaturePad = ({ value, onChange, width = 300, height = 150 }) => {
     };
 
     const draw = (e) => {
+        e.preventDefault();
         if (!isDrawing) return;
         const { offsetX, offsetY } = getCoordinates(e);
         ctx.lineTo(offsetX, offsetY);
         ctx.stroke();
     };
 
-    const stopDrawing = () => {
+    const stopDrawing = (e) => {
         if (isDrawing) {
             ctx.closePath();
             setIsDrawing(false);
-            if (onChange) {
-                onChange(canvasRef.current.toDataURL());
-            }
         }
     };
 
     const getCoordinates = (e) => {
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
         if (e.touches && e.touches[0]) {
-            const rect = canvasRef.current.getBoundingClientRect();
             return {
                 offsetX: e.touches[0].clientX - rect.left,
                 offsetY: e.touches[0].clientY - rect.top
             };
         }
         return {
-            offsetX: e.nativeEvent.offsetX,
-            offsetY: e.nativeEvent.offsetY
+            offsetX: e.nativeEvent.clientX - rect.left,
+            offsetY: e.nativeEvent.clientY - rect.top
         };
     };
 
     const clearSignature = () => {
-        ctx.clearRect(0, 0, width, height);
-        if (onChange) {
-            onChange('');
+        if (ctx) {
+            ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         }
     };
 
-    return (
-        <div style={{ display: 'block', border: '1px solid #ccc', backgroundColor: '#fff', width: '100%' }}>
-            <canvas
-                ref={canvasRef}
-                width={width}
-                height={height}
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
-                onTouchStart={startDrawing}
-                onTouchMove={draw}
-                onTouchEnd={stopDrawing}
-                style={{ touchAction: 'none', display: 'block', width: '100%', height: 'auto' }}
-            />
+    const confirmSignature = () => {
+        const dataURL = canvasRef.current.toDataURL();
+        if (onChange) onChange(dataURL);
+        setShowModal(false);
+    };
 
-            <div className="print-hide" style={{ borderTop: '1px solid #ccc', padding: '5px', textAlign: 'right', backgroundColor: '#f9f9f9' }}>
-                <button type="button" onClick={clearSignature} style={{ padding: '2px 8px', fontSize: '12px', cursor: 'pointer' }}>
-                    Clear
-                </button>
+    return (
+        <div className="signature-component">
+            {/* Clickable Preview Area */}
+            <div 
+                className="signature-preview-box" 
+                onClick={() => setShowModal(true)}
+                style={{ 
+                    border: '1px solid #ccc', 
+                    height: '100px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    background: '#fff',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}
+            >
+                {value ? (
+                    <img src={value} alt="signature" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                ) : (
+                    <span style={{ color: '#999', fontSize: '14px' }}>{label} (클릭하여 서명)</span>
+                )}
             </div>
+
+            {/* Large Modal for Signing */}
+            {showModal && (
+                <div className="signature-modal-overlay">
+                    <div className="signature-modal-content">
+                        <div className="signature-modal-header">
+                            <h3>{label}</h3>
+                            <p>여백을 터치하여 서명해 주세요.</p>
+                        </div>
+                        
+                        <div className="signature-canvas-wrapper">
+                            <canvas
+                                ref={canvasRef}
+                                onMouseDown={startDrawing}
+                                onMouseMove={draw}
+                                onMouseUp={stopDrawing}
+                                onMouseLeave={stopDrawing}
+                                onTouchStart={startDrawing}
+                                onTouchMove={draw}
+                                onTouchEnd={stopDrawing}
+                                style={{ touchAction: 'none' }}
+                            />
+                        </div>
+
+                        <div className="signature-modal-footer">
+                            <button type="button" className="sig-btn clear" onClick={clearSignature}>지우기</button>
+                            <div className="sig-actions">
+                                <button type="button" className="sig-btn cancel" onClick={() => setShowModal(false)}>취소</button>
+                                <button type="button" className="sig-btn save" onClick={confirmSignature}>서명 완료</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
