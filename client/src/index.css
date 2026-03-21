@@ -573,7 +573,8 @@ h3 {
   }
 
   #root > .container {
-    display: block !important;
+    display: flex !important;
+    justify-content: center !important;
     visibility: visible !important;
     position: absolute !important;
     top: 0 !important;
@@ -585,15 +586,15 @@ h3 {
 
   /* Specifically show the report content within the container */
   .report-paper {
-    width: 100% !important;
+    width: 90% !important;
     max-width: none !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
     visibility: visible !important;
     display: block !important;
-    zoom: 0.9 !important; /* Aggressive scale for guaranteed one-page fit */
+    zoom: 0.93 !important;
   }
 
   /* Ensure all internal elements are visible but allow specific overrides */
