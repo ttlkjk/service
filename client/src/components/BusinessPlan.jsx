@@ -57,14 +57,14 @@ const BusinessPlan = () => {
     };
     fetchData();
 
-    // Refresh on focus for multi-device sync
-    const handleFocus = () => {
-      loadData('projects').then(data => {
-        if (data) setProjects(data);
-      });
+    // Subscribe to real-time updates for multi-device sync
+    const subscription = subscribeToData('projects', (newData) => {
+      if (newData) setProjects(newData);
+    });
+
+    return () => {
+      if (subscription) subscription.unsubscribe();
     };
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   const handleSaveProjects = async (newProjects) => {

@@ -137,10 +137,17 @@ export async function loadData(key) {
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') { // Row not found
+      if (error.code === 'PGRST116') { // Row not found (Data missing, but table exists)
         const local = localStorage.getItem(key);
         return local ? JSON.parse(local) : null;
       }
+      
+      if (error.code === '42P01') { // Table not found
+        console.error(`[Supabase] Table "app_data" is missing! Please run the SQL script.`);
+        alert('필수 데이터 테이블(app_data)이 없습니다. 가이드에 따라 SQL을 실행해 주세요.');
+        return null;
+      }
+
       console.warn(`[Supabase] Load error for "${key}":`, error.message);
       const local = localStorage.getItem(key);
       return local ? JSON.parse(local) : null;
@@ -169,16 +176,43 @@ export async function saveData(key, value) {
         { key, value, updated_at: new Date().toISOString() },
         { onConflict: 'key' }
       );
+    
     if (error) {
+      if (error.code === '42P01') {
+        alert('테이블이 없어 저장에 실패했습니다. 가이드의 SQL을 실행해 주세요.');
+      }
       console.warn(`[Supabase] Save error for "${key}":`, error.message);
       return false;
     }
+    
     console.log(`[Supabase] Data saved successfully for "${key}"`);
     return true;
   } catch (err) {
     console.warn(`[Supabase] Network error saving "${key}"`, err);
     return false;
   }
+}
+
+/**
+ * 특정 키의 데이터 변경사항을 실시간으로 구독합니다. (Realtime)
+ */
+export function subscribeToData(key, onUpdate) {
+  return supabase
+    .channel(`realtime:${key}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'app_data', filter: `key=eq.${key}` },
+      (payload) => {
+        console.log(`[Supabase Realtime] Update for "${key}":`, payload);
+        if (payload.new && payload.new.value !== undefined) {
+          localStorage.setItem(key, JSON.stringify(payload.new.value));
+          onUpdate(payload.new.value);
+        }
+      }
+    )
+    .subscribe((status) => {
+      console.log(`[Supabase Realtime] Status for "${key}":`, status);
+    });
 }
 
 /**
