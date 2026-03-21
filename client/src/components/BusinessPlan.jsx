@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { loadData, saveData, getHospitals } from '../supabase';
+import { loadData, saveData, getHospitals, subscribeToData } from '../supabase';
 
 const GANTT_PALETTE = [
   'linear-gradient(90deg, #6366f1, #0ea5e9)',
