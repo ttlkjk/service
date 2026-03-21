@@ -649,13 +649,13 @@ h3 {
 
   .cell.content {
     flex: 1 !important; /* Take remaining space in the row */
-    padding: 6px 10px !important; /* Slightly reduced for single page fit */
-    line-height: 1.5 !important;
+    padding: 4px 10px !important; /* Reduced for single page fit */
+    line-height: 1.4 !important;
   }
 
   .report-header-container {
     margin: 0 !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 10px !important;
     padding-top: 0 !important;
     display: flex !important;
     justify-content: space-between !important;
@@ -701,7 +701,7 @@ h3 {
 
   /* Table Rows: Filling space in A4 print */
   .h-large {
-    min-height: 350px !important; /* Reduced from 450px to ensure one-page fit */
+    min-height: 280px !important; /* Reduced from 350px to ensure one-page fit */
   }
 
   .h-medium {
@@ -710,15 +710,15 @@ h3 {
 
   .inner-table th,
   .inner-table td {
-    padding: 6px 4px !important; /* Increased padding from 2px to 6px */
+    padding: 4px 4px !important; /* Reduced padding for single page fit */
     border: 1px solid #000 !important;
-    line-height: 1.4 !important;
+    line-height: 1.3 !important;
   }
 
   /* Type of Activity Section Restoration */
   .warranty-section {
     border-bottom: 1px solid #000 !important;
-    padding: 8px !important;
+    padding: 4px !important; /* Reduced for single page fit */
     text-align: center !important;
   }
 
@@ -731,10 +731,10 @@ h3 {
   }
 
   .checkbox-group.activity-types {
-    padding: 10px !important;
+    padding: 5px !important; /* Reduced for single page fit */
     display: flex !important;
     flex-wrap: wrap !important;
-    gap: 20px !important; /* Better gap between checkboxes */
+    gap: 15px !important; /* Slightly reduced gap */
     justify-content: space-around !important;
   }
 

@@ -369,14 +369,14 @@ function ServiceReportForm() {
             </form>
 
             {/* Footer: Signatures */}
-            <div className="signature-section" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', gap: '20px' }}>
+            <div className="signature-section" style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', gap: '20px' }}>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <div className="signature-name-group" style={{ width: '100%', display: 'flex', alignItems: 'baseline' }}>
                         <span style={{ whiteSpace: 'nowrap' }}>Servicer Name:</span>
                         <input type="text" value={servicerName} onChange={(e) => setServicerName(e.target.value)} className="signature-input" style={{ border: 'none', borderBottom: '1px solid black', flex: 1, width: '100%', marginLeft: '10px' }} />
                     </div>
                     <div className="signature-pad-wrapper" style={{ marginBottom: '5px', width: '100%' }}>
-                        <SignaturePad value={servicerSignature} onChange={setServicerSignature} height={120} />
+                        <SignaturePad value={servicerSignature} onChange={setServicerSignature} height={100} />
                     </div>
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -385,7 +385,7 @@ function ServiceReportForm() {
                         <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="signature-input" style={{ border: 'none', borderBottom: '1px solid black', flex: 1, width: '100%', marginLeft: '10px' }} />
                     </div>
                     <div className="signature-pad-wrapper" style={{ marginBottom: '5px', width: '100%' }}>
-                        <SignaturePad value={customerSignature} onChange={setCustomerSignature} height={120} />
+                        <SignaturePad value={customerSignature} onChange={setCustomerSignature} height={100} />
                     </div>
                 </div>
             </div>
