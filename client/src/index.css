@@ -573,8 +573,7 @@ h3 {
   }
 
   #root > .container {
-    display: flex !important;
-    justify-content: center !important;
+    display: block !important;
     visibility: visible !important;
     position: absolute !important;
     top: 0 !important;
@@ -586,9 +585,9 @@ h3 {
 
   /* Specifically show the report content within the container */
   .report-paper {
-    width: 100% !important;
+    width: 195mm !important; /* Fixed width slightly smaller than A4 */
     max-width: none !important;
-    margin: 0 auto !important;
+    margin: 0 0 0 8mm !important; /* Shift right by 8mm from the left edge */
     padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
