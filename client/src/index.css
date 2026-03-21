@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: light !important;
   --primary-color: #6366f1;
   --secondary-color: #a855f7;
   --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -54,29 +54,17 @@ body {
 h1,
 h2,
 h3 {
-  background: var(--erp-text);
-  -webkit-background-clip: unset;
-  background-clip: unset;
-  -webkit-text-fill-color: unset;
-  color: var(--erp-text);
-  font-weight: 800;
-  margin-top: 0;
-  letter-spacing: -0.02em;
-}
-
-.nav-header h1 {
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, var(--erp-primary), var(--erp-secondary));
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  margin-top: 0;
 }
 
 /* Report Form Specific Styles */
 .report-paper {
-  background: #ffffff !important;
-  color: #000000 !important;
+  background: white;
   padding: 40px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   max-width: 210mm;
@@ -834,7 +822,20 @@ h3 {
 /* Mobile Responsiveness */
 @media screen and (max-width: 768px) {
   body {
-    background: white !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .container {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .nav-header h1, 
+  .nav-links a {
+    color: #1f2937 !important;
+    -webkit-text-fill-color: initial !important;
   }
 
   .container {
@@ -1132,149 +1133,4 @@ h3 {
 @keyframes fadeInERP {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
-}
-/* Mobile Responsiveness & Background Fixes */
-@media screen and (max-width: 768px) {
-  html, body {
-    background: #f8fafc !important; /* Force a light gray background for the app on mobile */
-  }
-
-  .container {
-    padding: 10px;
-  }
-
-  .nav-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .nav-header h1 {
-    font-size: 1.40rem;
-    margin-bottom: 10px;
-  }
-
-  .nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    width: 100%;
-  }
-
-  .nav-links a {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 8px;
-    text-decoration: none;
-    color: var(--erp-text);
-  }
-
-  .report-paper {
-    padding: 15px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    background: #ffffff !important; /* Force white background on mobile */
-    box-shadow: none !important;
-  }
-
-  .report-header-container {
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-    gap: 15px !important;
-  }
-
-  .header-info {
-    align-items: center !important;
-    text-align: center !important;
-    width: 100% !important;
-  }
-
-  .report-header-title {
-    text-align: center !important;
-    font-size: 1.6rem !important;
-    margin: 5px 0 !important;
-  }
-
-  .date-input-wrapper {
-    justify-content: center !important;
-    width: 100% !important;
-  }
-
-  /* Force Grid Stack on Mobile */
-  .grid-row {
-    flex-direction: column !important;
-    height: auto !important;
-    border-bottom: 2px solid #000 !important;
-  }
-
-  .cell.label {
-    width: 100% !important;
-    flex: none !important;
-    min-height: 35px !important;
-    border-right: none !important;
-    border-bottom: 1px solid #000 !important;
-    background-color: #f1f5f9 !important;
-    justify-content: flex-start !important;
-    padding-left: 10px !important;
-    font-size: 0.9rem !important;
-  }
-
-  .cell.content {
-    width: 100% !important;
-    flex: none !important;
-    min-height: 40px !important;
-    padding: 10px !important;
-    border-right: none !important;
-    font-size: 1rem !important;
-  }
-
-  .cell.content input {
-    font-size: 16px !important; /* Prevents iOS auto-zoom on input focus */
-  }
-
-  .h-large {
-    min-height: 200px !important;
-  }
-
-  /* Support for inner tables horizontal scroll */
-  .grid-row[style*="display: block"] {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-bottom: 2px solid #000 !important;
-  }
-
-  .inner-table {
-    min-width: 500px; /* Force minimum width to maintain table structure */
-  }
-
-  .signature-section {
-    flex-direction: column !important;
-    gap: 40px !important;
-    margin-top: 30px !important;
-  }
-
-  .signature-pad-wrapper {
-    width: 100% !important;
-    height: 120px !important;
-  }
-
-  .action-buttons-container {
-    flex-direction: column !important;
-    gap: 12px !important;
-    padding: 20px 0 !important;
-  }
-
-  .action-buttons-container button {
-    width: 100% !important;
-    padding: 18px !important;
-    font-size: 1.2rem !important;
-    border-radius: 12px !important;
-  }
 }
