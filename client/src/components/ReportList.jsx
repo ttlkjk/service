@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { getReports, deleteReport } from '../supabase';
 
 function ReportList() {
     const [reports, setReports] = useState([]);
@@ -15,13 +15,12 @@ function ReportList() {
 
     const fetchReports = async () => {
         try {
-            const params = new URLSearchParams();
-            if (searchDate) params.append('date', searchDate);
-            if (searchCustomer) params.append('customer', searchCustomer);
-            if (searchProducts) params.append('products', searchProducts);
-
-            const response = await axios.get('/api/reports', { params });
-            setReports(response.data);
+            const data = await getReports({
+                date: searchDate,
+                customer: searchCustomer,
+                products: searchProducts,
+            });
+            setReports(data);
         } catch (error) {
             console.error('Error fetching reports', error);
         }
@@ -31,27 +30,16 @@ function ReportList() {
         fetchReports();
     };
 
-    const handleClear = () => {
+    const handleClear = async () => {
         setSearchDate('');
         setSearchCustomer('');
         setSearchProducts('');
-        // We need to wait for state update or pass empty values directly
-        // Better to just call fetch directly with empty params if we want immediate update
-        // Or cleaner: Reset state then trigger effect? 
-        // Let's manually trigger fetch with empty params ensuring UI update
-        // But setState is async. Let's just refetch after clearing.
-        // Actually, simplest is:
-        // setSearchDate('', () => fetchReports()); // No callback in hooks
-        // We will just clear inputs. User can click search again or we can auto-search?
-        // Let's implement auto-search on clear for better UX, but passing empty params directly.
-
-        // Correct approach for 'Clear':
-        setSearchDate('');
-        setSearchCustomer('');
-        setSearchProducts('');
-
-        // To fetch all immediately without waiting for re-render cycle issues in this specific function scope:
-        axios.get('/api/reports').then(res => setReports(res.data)).catch(err => console.error(err));
+        try {
+            const data = await getReports({});
+            setReports(data);
+        } catch (error) {
+            console.error('Error fetching reports', error);
+        }
     };
 
     const handleRowClick = (id) => {
@@ -59,10 +47,10 @@ function ReportList() {
     };
 
     const handleDelete = async (e, id) => {
-        e.stopPropagation(); // Prevent row click from triggering
+        e.stopPropagation();
         if (window.confirm('Are you sure you want to delete this report?')) {
             try {
-                await axios.delete(`/api/reports/${id}`);
+                await deleteReport(id);
                 setReports(reports.filter(report => report.id !== id));
             } catch (error) {
                 console.error('Error deleting report', error);
@@ -103,7 +91,6 @@ function ReportList() {
                 <button onClick={handleClear} className="btn-secondary" style={{ padding: '8px 16px', backgroundColor: '#6c757d', color: 'white' }}>Clear</button>
             </div>
 
-
             {reports.length === 0 ? (
                 <p>No reports found.</p>
             ) : (
@@ -121,19 +108,33 @@ function ReportList() {
                     <tbody>
                         {reports.map((report) => (
                             <tr key={report.id} onClick={() => handleRowClick(report.id)}>
-                                <td>{report.hospitalName}</td>
-                                <td>{report.serviceDate}</td>
+                                <td>{report.hospital_name}</td>
+                                <td>{report.service_date}</td>
                                 <td>{report.products}</td>
                                 <td>{report.subject}</td>
                                 <td>{new Date(report.created_at).toLocaleString()}</td>
                                 <td>
-                                    <button
-                                        className="delete-btn"
-                                        onClick={(e) => handleDelete(e, report.id)}
-                                    >
-                                        Delete
-                                    </button>
+                                    <div style={{ display: 'flex', gap: '5px' }}>
+                                        <button
+                                            className="btn-print"
+                                            style={{ padding: '6px 12px', fontSize: '0.9rem' }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/reports/${report.id}?print=true`);
+                                            }}
+                                        >
+                                            Print
+                                        </button>
+
+                                        <button
+                                            className="delete-btn"
+                                            onClick={(e) => handleDelete(e, report.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </td>
+
                             </tr>
                         ))}
                     </tbody>

@@ -5,6 +5,7 @@ const SignaturePad = ({ value, onChange, width = 300, height = 150 }) => {
     const [isDrawing, setIsDrawing] = useState(false);
     const [ctx, setCtx] = useState(null);
 
+    // 캔버스 컨텍스트 초기화 (한 번만)
     useEffect(() => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
@@ -12,16 +13,20 @@ const SignaturePad = ({ value, onChange, width = 300, height = 150 }) => {
         context.lineCap = 'round';
         context.strokeStyle = '#000';
         setCtx(context);
-
-        // Load existing signature if provided
-        if (value) {
-            const img = new Image();
-            img.onload = () => {
-                context.drawImage(img, 0, 0);
-            };
-            img.src = value;
-        }
     }, []);
+
+    // value(기존 서명)가 로드되면 캔버스에 그리기
+    useEffect(() => {
+        if (!value || !canvasRef.current) return;
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = () => {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, 0, 0);
+        };
+        img.src = value;
+    }, [value]);
 
     const startDrawing = (e) => {
         const { offsetX, offsetY } = getCoordinates(e);
@@ -69,7 +74,7 @@ const SignaturePad = ({ value, onChange, width = 300, height = 150 }) => {
     };
 
     return (
-        <div style={{ display: 'inline-block', border: '1px solid #ccc', backgroundColor: '#fff' }}>
+        <div style={{ display: 'block', border: '1px solid #ccc', backgroundColor: '#fff', width: '100%' }}>
             <canvas
                 ref={canvasRef}
                 width={width}
@@ -81,9 +86,10 @@ const SignaturePad = ({ value, onChange, width = 300, height = 150 }) => {
                 onTouchStart={startDrawing}
                 onTouchMove={draw}
                 onTouchEnd={stopDrawing}
-                style={{ touchAction: 'none', display: 'block' }}
+                style={{ touchAction: 'none', display: 'block', width: '100%', height: 'auto' }}
             />
-            <div style={{ borderTop: '1px solid #ccc', padding: '5px', textAlign: 'right', backgroundColor: '#f9f9f9' }}>
+
+            <div className="print-hide" style={{ borderTop: '1px solid #ccc', padding: '5px', textAlign: 'right', backgroundColor: '#f9f9f9' }}>
                 <button type="button" onClick={clearSignature} style={{ padding: '2px 8px', fontSize: '12px', cursor: 'pointer' }}>
                     Clear
                 </button>

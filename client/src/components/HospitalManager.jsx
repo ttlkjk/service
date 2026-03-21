@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getHospitals, addHospital, updateHospital, deleteHospital } from '../supabase';
 
 const HospitalManager = () => {
     const [hospitals, setHospitals] = useState([]);
@@ -17,8 +18,6 @@ const HospitalManager = () => {
         software_version: ''
     });
 
-    const apiUrl = '/api/hospitals';
-
     useEffect(() => {
         fetchHospitals();
     }, []);
@@ -26,9 +25,7 @@ const HospitalManager = () => {
     const fetchHospitals = async () => {
         try {
             setLoading(true);
-            const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error('Failed to fetch hospitals');
-            const data = await response.json();
+            const data = await getHospitals();
             setHospitals(data);
         } catch (err) {
             setError(err.message);
@@ -44,25 +41,19 @@ const HospitalManager = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('handleSubmit called with:', formData);
         if (!formData.name) return alert('Hospital name is required');
 
         try {
-            const method = editingId ? 'PUT' : 'POST';
-            const url = editingId ? `${apiUrl}/${editingId}` : apiUrl;
-
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to save hospital');
+            console.log('Submitting form. editingId:', editingId, 'formData:', formData);
+            if (editingId !== null && editingId !== undefined) {
+                console.log('Updating hospital with ID:', editingId);
+                await updateHospital(editingId, formData);
+                alert('Hospital updated successfully');
+            } else {
+                console.log('Adding new hospital');
+                await addHospital(formData);
+                alert('Hospital added successfully');
             }
-
-            alert(editingId ? 'Hospital updated successfully' : 'Hospital added successfully');
             setFormData({
                 name: '', location: '', products: '', system: '',
                 installation_date: '', device_type: '', serial_number: '',
@@ -76,9 +67,13 @@ const HospitalManager = () => {
     };
 
     const handleEdit = (hospital) => {
+        console.log('Edit button clicked for hospital:', hospital);
+        if (!hospital.id) {
+            console.error('Hospital ID is missing!', hospital);
+        }
         setEditingId(hospital.id);
         setFormData({
-            name: hospital.name,
+            name: hospital.name || '',
             location: hospital.location || '',
             products: hospital.products || '',
             system: hospital.system || '',
@@ -92,16 +87,10 @@ const HospitalManager = () => {
     };
 
     const handleDelete = async (id) => {
-        console.log('handleDelete called with ID:', id);
         if (!confirm('Are you sure you want to delete this hospital?')) return;
 
         try {
-            const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to delete hospital');
-            }
-
+            await deleteHospital(id);
             alert('Hospital deleted successfully');
             if (editingId === id) {
                 setEditingId(null);
@@ -126,26 +115,6 @@ const HospitalManager = () => {
         });
     };
 
-    const handleImport = async () => {
-        if (!confirm('This will merge data from the server Excel file.\n\n- Existing hospitals in the file will be UPDATED.\n- New hospitals in the file will be ADDED.\n- Hospitals you added manually that are NOT in the file will be PRESERVED.\n\nProceed?')) return;
-
-        try {
-            setLoading(true);
-            const response = await fetch('/api/hospitals/reset-and-import', { method: 'POST' });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Import failed');
-            }
-            const result = await response.json();
-            alert(`Import successful!\nTotal processed: ${result.count}`);
-            fetchHospitals();
-        } catch (err) {
-            alert(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     if (loading && hospitals.length === 0) return <div className="loading">Loading hospitals...</div>;
 
     return (
@@ -153,9 +122,6 @@ const HospitalManager = () => {
             <div className="card manage-card">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h2 className="section-title">{editingId ? 'Edit Hospital' : 'Add New Hospital'}</h2>
-                    <button type="button" onClick={handleImport} className="btn btn-warning" style={{ backgroundColor: '#ffc107', color: '#000' }}>
-                        Import Data
-                    </button>
                 </div>
                 <form onSubmit={handleSubmit} className="hospital-form">
                     <div className="form-grid">
