@@ -703,7 +703,7 @@ h3 {
 
   /* Table Rows: Filling space in A4 print */
   .h-large {
-    min-height: 200px !important; /* Significantly reduced to force fit */
+    min-height: 300px !important; /* Increased back for more writing space, still fits due to zoom: 0.9 */
   }
 
   .h-medium {
