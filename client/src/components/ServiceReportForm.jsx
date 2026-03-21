@@ -94,7 +94,7 @@ function ServiceReportForm() {
             // Auto-print if query param is set
             if (searchParams.get('print') === 'true') {
                 setTimeout(() => {
-                    handleSavePdf();
+                    handlePrint();
                 }, 1000); // Give some time for signatures/images to load
             }
 
@@ -142,7 +142,7 @@ function ServiceReportForm() {
         setServiceHours(newHours);
     };
 
-    const handleSavePdf = () => {
+    const handlePrint = () => {
         const safeSystem = system ? system.replace(/[^a-z0-9]/gi, '_') : 'ServiceReport';
         const filename = `${safeSystem}_${serviceDate}.pdf`;
         const originalTitle = document.title;
@@ -394,11 +394,8 @@ function ServiceReportForm() {
 
 
             <div className="action-buttons-container print-hide" style={{ textAlign: 'center', marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '20px' }} data-html2canvas-ignore="true">
-                <button type="button" onClick={handleSavePdf} className="btn-print" style={{ padding: '10px 40px', fontSize: '1.2rem', cursor: 'pointer', border: 'none' }}>
+                <button type="button" onClick={handlePrint} className="btn-print" style={{ padding: '10px 40px', fontSize: '1.2rem', cursor: 'pointer', border: 'none' }}>
                     Print Report
-                </button>
-                <button type="button" onClick={handleSavePdf} className="btn-pdf" style={{ padding: '10px 40px', fontSize: '1.2rem', cursor: 'pointer', border: 'none' }}>
-                    Save to PDF
                 </button>
 
                 <button onClick={handleSubmit} style={{ padding: '10px 40px', fontSize: '1.2rem', cursor: 'pointer' }}>
