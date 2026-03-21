@@ -180,6 +180,8 @@ export async function saveData(key, value) {
     if (error) {
       if (error.code === '42P01') {
         alert('테이블이 없어 저장에 실패했습니다. 가이드의 SQL을 실행해 주세요.');
+      } else {
+        alert(`서버 저장 오류 (${error.code}): ${error.message}\n이 메시지를 캡처하여 전달해 주세요.`);
       }
       console.warn(`[Supabase] Save error for "${key}":`, error.message);
       return false;
