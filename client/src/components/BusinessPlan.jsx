@@ -18,6 +18,7 @@ const BusinessPlan = () => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [hospitals, setHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('erp-theme') || 'light');
 
   // Modal State
@@ -55,11 +56,25 @@ const BusinessPlan = () => {
       setLoading(false);
     };
     fetchData();
+
+    // Refresh on focus for multi-device sync
+    const handleFocus = () => {
+      loadData('projects').then(data => {
+        if (data) setProjects(data);
+      });
+    };
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
-  const handleSaveProjects = (newProjects) => {
+  const handleSaveProjects = async (newProjects) => {
     setProjects(newProjects);
-    saveData('projects', newProjects);
+    setSaving(true);
+    const success = await saveData('projects', newProjects);
+    setSaving(false);
+    if (!success) {
+      alert('서버 저장에 실패했습니다. 네트워크 연결을 확인해 주세요.');
+    }
   };
 
   // --- Gantt Logic ---
@@ -476,8 +491,10 @@ const BusinessPlan = () => {
                 </button>
               ) : <div></div>}
               <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button onClick={() => setModalType(null)} className="btn btn-secondary">취소</button>
-                <button onClick={handleSaveModal} className="btn btn-primary">저장하기</button>
+                <button onClick={() => setModalType(null)} className="btn btn-secondary" disabled={saving}>취소</button>
+                <button onClick={handleSaveModal} className="btn btn-primary" disabled={saving}>
+                  {saving ? '저장 중...' : '저장하기'}
+                </button>
               </div>
             </div>
           </div>

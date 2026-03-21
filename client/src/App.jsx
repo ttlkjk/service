@@ -10,6 +10,11 @@ import './index.css';
 function App() {
   useEffect(() => {
     syncAllData();
+    
+    // Sync on window focus for multi-device support
+    const handleFocus = () => syncAllData();
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, []);
 
   return (

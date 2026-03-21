@@ -169,9 +169,15 @@ export async function saveData(key, value) {
         { key, value, updated_at: new Date().toISOString() },
         { onConflict: 'key' }
       );
-    if (error) console.warn(`[Supabase] Save error for "${key}":`, error.message);
+    if (error) {
+      console.warn(`[Supabase] Save error for "${key}":`, error.message);
+      return false;
+    }
+    console.log(`[Supabase] Data saved successfully for "${key}"`);
+    return true;
   } catch (err) {
     console.warn(`[Supabase] Network error saving "${key}"`, err);
+    return false;
   }
 }
 
