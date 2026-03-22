@@ -373,7 +373,20 @@ function ServiceReportForm() {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <div className="signature-name-group" style={{ width: '100%', display: 'flex', alignItems: 'baseline' }}>
                         <span style={{ whiteSpace: 'nowrap' }}>Servicer Name:</span>
-                        <input type="text" value={servicerName} onChange={(e) => setServicerName(e.target.value)} className="signature-input" style={{ border: 'none', borderBottom: '1px solid black', flex: 1, width: '100%', marginLeft: '10px' }} />
+                        <input 
+                            type="text" 
+                            value={servicerName} 
+                            onChange={(e) => setServicerName(e.target.value)} 
+                            className="signature-input" 
+                            list="servicer-names"
+                            style={{ border: 'none', borderBottom: '1px solid black', flex: 1, width: '100%', marginLeft: '10px' }} 
+                        />
+                        <datalist id="servicer-names">
+                            <option value="문남수 이사" />
+                            <option value="김종국 이사" />
+                            <option value="김성민 과장" />
+                            <option value="김진성 과장" />
+                        </datalist>
                     </div>
                     <div className="signature-pad-wrapper" style={{ marginBottom: '5px', width: '100%' }}>
                         <SignaturePad value={servicerSignature} onChange={setServicerSignature} height={100} />
