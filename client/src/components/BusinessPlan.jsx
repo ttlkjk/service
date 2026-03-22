@@ -298,9 +298,29 @@ const BusinessPlan = () => {
         </div>
       </div>
 
-      <div className="glass-card" style={{ padding: '1.5rem', overflowX: 'auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: `200px repeat(${ganttData.colCount}, 1fr)`, gap: '1px', background: 'var(--erp-glass-border)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--erp-glass-border)' }}>
-          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', fontWeight: 600, fontSize: '0.85rem', color: 'var(--erp-text-muted)' }}>프로젝트명</div>
+      <div className="glass-card" style={{ padding: '1.5rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: `200px repeat(${ganttData.colCount}, minmax(100px, 1fr))`, 
+          gap: '1px', 
+          background: 'var(--erp-glass-border)', 
+          borderRadius: '12px', 
+          overflow: 'hidden', 
+          border: '1px solid var(--erp-glass-border)',
+          width: 'max-content',
+          minWidth: '100%'
+        }}>
+          <div style={{ 
+            background: 'var(--erp-bg)', 
+            padding: '1rem', 
+            fontWeight: 600, 
+            fontSize: '0.85rem', 
+            color: 'var(--erp-text-muted)',
+            position: 'sticky',
+            left: 0,
+            zIndex: 20,
+            borderRight: '1px solid var(--erp-glass-border)'
+          }}>프로젝트명</div>
           {ganttData.headers.map((h, i) => (
             <div key={i} style={h.isToday ? { background: 'rgba(14, 165, 233, 0.1)', color: 'var(--erp-secondary)', fontWeight: 700, padding: '1rem', textAlign: 'center', fontSize: '0.85rem', borderBottom: '2px solid var(--erp-secondary)' } : { background: 'rgba(255,255,255,0.02)', padding: '1rem', textAlign: 'center', fontWeight: 600, fontSize: '0.85rem', color: 'var(--erp-text-muted)' }}>
               {h.label}
@@ -341,7 +361,22 @@ const BusinessPlan = () => {
               <React.Fragment key={project.id}>
                 <div 
                   onClick={() => openProjectModal(project)}
-                  style={{ background: 'var(--erp-bg)', padding: '1rem', fontWeight: 600, fontSize: '0.9rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer', borderRight: '1px solid var(--erp-glass-border)', gridRow: `span ${tracks.length}`, minHeight: '50px' }}
+                  style={{ 
+                    background: 'var(--erp-bg)', 
+                    padding: '1rem', 
+                    fontWeight: 600, 
+                    fontSize: '0.9rem', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    justifyContent: 'center', 
+                    cursor: 'pointer', 
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 10,
+                    borderRight: '1px solid var(--erp-glass-border)', 
+                    gridRow: `span ${tracks.length}`, 
+                    minHeight: '50px' 
+                  }}
                 >
                   <span style={{ fontSize: '0.7rem', color: 'var(--erp-secondary)', fontWeight: 700, marginBottom: '2px' }}>{project.hospitalName || '병원 미지정'}</span>
                   <span>{project.name}</span>
