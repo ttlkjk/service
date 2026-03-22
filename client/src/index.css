@@ -133,9 +133,11 @@ h3 {
 }
 
 .cell.label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #f8f9fa;
   font-weight: bold;
-  justify-content: center;
   min-width: 120px;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
@@ -642,11 +644,13 @@ h3 {
   }
 
   .cell.label {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     flex: 0 0 120px !important; /* Fixed width for labels, like original */
     background-color: #f8f9fa !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    justify-content: center !important;
     font-weight: bold !important;
   }
 
@@ -931,8 +935,10 @@ h3 {
   }
 
   .cell.label {
-    background-color: #f3f4f6;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    background-color: #f3f4f6;
     /* Center label text like desktop */
     padding: 8px;
     width: 30%;
